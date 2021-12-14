@@ -14,10 +14,7 @@ let palette = [
 
 //let particles = []; //array that will store our particles
 let particleRings = []; //array that will store our particles
-let particleRing1;
-let particleRing2;
-let particleRing3;
-let particleRing4;
+let particleRing1, particleRing2, particleRing3, particleRing4;
 let particleWave;
 
 let vector; //vector to determine which direction to move the individual particles in
@@ -28,9 +25,9 @@ let time = 0;
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  particleRing4 = new ParticleRing(0, 0, 170, 80, palette[3], 1/2);
+  particleRing4 = new ParticleRing(0, 0, 170, 15, palette[3], 1/2);
 
-  particleRing1= new ParticleRing(0, 0, 100 ,30, palette[2], 1/2);
+  particleRing1= new ParticleRing(0, 0, 110 ,5, palette[2], 1);
   particleRing2 = new ParticleRing(0, 0, 130, 30, palette[1], 1/2);
   particleRing3 = new ParticleRing(0, 0, 160, 30, palette[3], 1/2);
   //particleWave = new ParticleWave(0, 0, 10, 10, palette[1], 4)
@@ -44,30 +41,35 @@ function draw() {
   //translateX+=10;
   background(palette[0]);
 
-  time -= 0.1;
+  
+  // if(time < 2*PI){
+  //   time+=0.06;
+  // }
+  time+=0.06;
+  //console.log(time);
+
+  //time+=0.06;
 
   line(windowWidth / 2, 0, windowWidth / 2, windowHeight);
   line(0, windowHeight / 2, windowWidth, windowHeight / 2);
-
   translate(windowWidth / 2, windowHeight / 2)
 
-
-
   //you can call any new type of 
-  let v = createVector(50 * cos(time*2), 50 * sin(time*2));
-  let v1 = createVector(50 * time, 50* sin(time));
-  let v2 = p5.Vector.fromAngle(millis() / 100, 50);
-  particleRing1.show(1, v);
-  particleRing3.show(1, v);
+  let v = createVector( 200* sin(millis()/300), 200* cos(millis()/300));
+  //console.log(v);
+  let v1 = createVector(50 * time, sin(50* time));
+  let v2 = p5.Vector.fromAngle(time*100, 50);
   particleRing4.show(1, v);
-  particleRing2.show(1, v);
 
-
+  // particleRing3.show(1, v);
+  // particleRing2.show(1, v);
+  //particleRing1.show(-1, v);
 
 }
 
 //vector param is any matrix to apply a transformation so that the history of a Particle is in terms 
-//of the global 
+//of the global coordinates. Calls to rotate(), rotate the entire coordinate system. And our Particle object 
+//history will still be in the original coordinate system.
 class Particle {
   constructor(x, y, size, color, vector) {
     this.x = x;
@@ -86,7 +88,6 @@ class Particle {
     circle(this.x +this.vector.x, this.y + this.vector.y, this.size);
     var v = createVector(this.x +this.vector.x, this.y + this.vector.y);
     this.history.push(v);
-    beginShape();
 
 
     //experiment with drawingCOntect
@@ -95,26 +96,23 @@ class Particle {
     drawingContext.shadowOffsetY = 5;
     drawingContext.shadowBlur = 30;
     drawingContext.shadowColor = 'black';
+
+    beginShape();
+
     for (var i = 0; i < this.history.length; i++) {
       var pos = this.history[i];
-      if (this.history.length > 100) {
+      if (this.history.length > 500) {
         this.history.splice(0, 1);
       }
       strokeCap(ROUND);
       strokeJoin(ROUND);
-
       strokeWeight(this.size-(this.size/i));
-      stroke(this.color[0], this.color[1], this.color[2], 255)
+      stroke(this.color[0], this.color[1], this.color[2], i);
+      
 
-      //noStroke();
-      //blendMode(HARD_LIGHT);
       noFill();
-      //fill(this.color[0], this.color[1], this.color[2], 255)
-      //circle(pos.x, pos.y, this.size-(this.size/i));
-      //point(pos.x, pos.y);
 
       vertex(pos.x, pos.y);
-
     }
     endShape();
 
@@ -215,7 +213,6 @@ class ParticleWave {
       vertex(x, y);
     }
     endShape();
-    //old approach was bad. create a number of Particles in a row and then just move them up and down
     pop();
   }
 
