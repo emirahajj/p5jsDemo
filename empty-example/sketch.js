@@ -43,8 +43,8 @@ function setGradient(x, y, w, h, c1, c2, axis) {
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  particleRing4 = new ParticleRing(0, 0, 100, 7, palette[1], 1);
-  particleRing5 = new ParticleRing(0, 0, 400, 7, palette[2], 1);
+  particleRing4 = new ParticleRing(0, 0, 100, 5, palette[1], 1);
+  particleRing5 = new ParticleRing(0, 0, 400, 10, palette[2], 1);
 
   particleRing1 = new ParticleRing(0, 0, 400, 7, palette[2], 1);
   particleRing2 = new ParticleRing(0, 0, 0, 30, palette[1], 1 / 4);
@@ -62,8 +62,8 @@ function draw() {
   rectMode(CENTER);
   background(palette[0]);
 
-  line(windowWidth / 2, 0, windowWidth / 2, windowHeight);
-  line(0, windowHeight / 2, windowWidth, windowHeight / 2);
+  // line(windowWidth / 2, 0, windowWidth / 2, windowHeight);
+  // line(0, windowHeight / 2, windowWidth, windowHeight / 2);
   translate(windowWidth / 2, windowHeight / 2)
 
   time+= PI/40;
@@ -78,8 +78,8 @@ function draw() {
   let v2 = p5.Vector.fromAngle(time, 5);
   // let v2 = p5.Vector.fromAngle(time * 8, 50);
 
-  particleRing4.show(0.4, vv);
-  particleRing5.show(0.4, vv);
+  particleRing4.show(0.75, vv);
+  particleRing5.show(0.75, vv);
 
 }
 
@@ -110,7 +110,7 @@ class Particle {
 
     for (var i = 0; i < this.history.length; i++) {
       var pos = this.history[i];
-      if (this.history.length > 200) {
+      if (this.history.length > 500) {
         this.history.splice(0, 1);
       }
       strokeCap(ROUND);
@@ -120,7 +120,7 @@ class Particle {
       stroke(this.color[0], this.color[1], this.color[2],255);
       noFill();
       // vertex(pos.x, pos.y);
-      point(pos.x, pos.y)
+      point(pos.x, pos.y)  
     }
     // endShape();
 
