@@ -7,7 +7,7 @@ let palette = [
   [158, 123, 155]
 ]; //stores 3 RBG colors
 
-let particleRing1, particleRing2, particleRing3, particleRing4, particleRing5;
+let particleRing1, particleRing2, particleRing3, particleRing4, particleRing5, particleRing6;
 let particleWave;
 
 let time = 0;
@@ -43,12 +43,13 @@ function setGradient(x, y, w, h, c1, c2, axis) {
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  particleRing4 = new ParticleRing(0, 0, 100, 5, palette[1], 1);
-  particleRing5 = new ParticleRing(0, 0, 400, 10, palette[2], 1);
+  particleRing4 = new ParticleRing(200, 0, 100, 5, palette[1], 1);
+  particleRing6 = new ParticleRing(-300, 0, 100, 5, palette[1], 1);
+  particleRing5 = new ParticleRing(200, 0, 250, 7, palette[2], 1);
 
-  particleRing1 = new ParticleRing(0, 0, 400, 7, palette[2], 1);
-  particleRing2 = new ParticleRing(0, 0, 0, 30, palette[1], 1 / 4);
-  particleRing3 = new ParticleRing(0, 0, 160, 30, palette[3], 1 / 2);
+  // particleRing1 = new ParticleRing(0, 0, 500, 10, palette[3], 1);
+  // particleRing2 = new ParticleRing(0, 0, 0, 30, palette[1], 1 / 4);
+  // particleRing3 = new ParticleRing(0, 0, 160, 30, palette[3], 1 / 2);
 
   b1 = color(palette[0]);
   b2 = color(palette[1]);
@@ -67,12 +68,12 @@ function draw() {
   translate(windowWidth / 2, windowHeight / 2)
 
   time+= PI/40;
-  rotate(time/100)
 
   //you can call any new type of 
   let v = createVector(200 * sin(millis() / 300), 200 * cos(millis() / 300));
   //number multiplied outside trig func makes it longer
   let vv = createVector((50 * (sin(time))), (50 * cos(time)));
+  let vv2 = createVector((100 * (sin(time*30))), (100 * cos(time*30)));
   //console.log(v);
   let v1 = createVector(50 * time, sin(50 * time));
   let v2 = p5.Vector.fromAngle(time, 5);
@@ -80,6 +81,8 @@ function draw() {
 
   particleRing4.show(0.75, vv);
   particleRing5.show(0.75, vv);
+  particleRing6.show(0.75, vv);
+  //particleRing1.show(0.75, vv);
 
 }
 
@@ -110,12 +113,13 @@ class Particle {
 
     for (var i = 0; i < this.history.length; i++) {
       var pos = this.history[i];
-      if (this.history.length > 500) {
+      
+      if (this.history.length > 400) {
         this.history.splice(0, 1);
       }
       strokeCap(ROUND);
       strokeJoin(ROUND);
-      strokeWeight(map(i, 0, this.history.length, 0, this.size));
+      strokeWeight(map(i, 0, this.history.length, 0, this.size/2));
       stroke(this.color[0], this.color[1], this.color[2], map(i, 0, this.history.length, 0, 255));
       stroke(this.color[0], this.color[1], this.color[2],255);
       noFill();
@@ -146,8 +150,8 @@ class ParticleRing {
     this.particles = []; //stores the number of particles in the Ring
     //for loop
     for (var i = 0; i < 2 * PI; i = (i + PI / (this.period))) {
-      let prevX = cos(i) * this.radius;
-      let prevY = sin(i) * this.radius;
+      let prevX = (cos(i) * this.radius);
+      let prevY = (sin(i) * this.radius);
       let part = new Particle(prevX, prevY, this.particleSize, this.color, createVector(0, 0));
       this.particles.push(part);
     }
@@ -157,17 +161,20 @@ class ParticleRing {
   show(direction, v) {
     push();
     noStroke();
-    //translate(this.x/100, this.y/100);
+    translate(this.y, this.x);
+    rotate(time/100)
+
     for (let i = 0; i < this.particles.length; i++) {
       this.particles[i].vector = v;
       let prevX = this.particles[i].x;
       let prevY = this.particles[i].y;
       let rotatedX = prevX * cos(PI * direction / 100) - prevY * sin(PI * direction / 100);
       let rotatedY = prevX * sin(PI * direction / 100) + prevY * cos(PI * direction / 100);
-      this.particles[i].x = rotatedX
-      this.particles[i].y = rotatedY
+      this.particles[i].x = rotatedX;
+      this.particles[i].y = rotatedY;
       this.particles[i].show();
     }
+
     pop();
   }
 
