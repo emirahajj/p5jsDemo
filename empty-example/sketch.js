@@ -1,4 +1,5 @@
 let angles = [];
+let myFont;
 
 let palette = [
   [30, 30, 30],
@@ -40,7 +41,12 @@ function setGradient(x, y, w, h, c1, c2, axis) {
   }
 }
 
-function setup() {
+function preload() {
+   myFont = loadFont('ChicagoFLF.otf');
+
+}
+
+function setup(){
   createCanvas(windowWidth, windowHeight);
 
   particleRing4 = new ParticleRing(200, 0, 100, 5, palette[1], 1);
@@ -79,9 +85,15 @@ function draw() {
   let v2 = p5.Vector.fromAngle(time, 5);
   // let v2 = p5.Vector.fromAngle(time * 8, 50);
 
-  particleRing4.show(0.75, vv);
-  particleRing5.show(0.75, vv);
+  particleRing4.show(0.85, vv);
+  //particleRing5.show(0.75, vv);
   particleRing6.show(0.75, vv);
+
+  textSize(32);
+  textAlign(CENTER, CENTER);
+  textFont(myFont);
+  text('starting \nsoon...', 10, 30);
+  fill(0, 102, 153);
   //particleRing1.show(0.75, vv);
 
 }
