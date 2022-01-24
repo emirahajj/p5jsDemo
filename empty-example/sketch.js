@@ -19,28 +19,6 @@ const X_AXIS = 2;
 let b1, b2, c1, c2;
 
 
-function setGradient(x, y, w, h, c1, c2, axis) {
-  noFill();
-
-  if (axis === Y_AXIS) {
-    // Top to bottom gradient
-    for (let i = y; i <= y + h; i++) {
-      let inter = map(i, y, y + h, 0, 1);
-      let c = lerpColor(c1, c2, inter);
-      stroke(c);
-      line(x, i, x + w, i);
-    }
-  } else if (axis === X_AXIS) {
-    // Left to right gradient
-    for (let i = x; i <= x + w; i++) {
-      let inter = map(i, x, x + w, 0, 1);
-      let c = lerpColor(c1, c2, inter);
-      stroke(c);
-      line(i, y, i, y + h);
-    }
-  }
-}
-
 function preload() {
    myFont = loadFont('ChicagoFLF.otf');
 
@@ -50,16 +28,13 @@ function setup(){
   createCanvas(windowWidth, windowHeight);
 
   particleRing4 = new ParticleRing(200, 0, 100, 5, palette[1], 1);
-  particleRing6 = new ParticleRing(-300, 0, 100, 5, palette[1], 1);
+  particleRing6 = new ParticleRing(0, 0, 100, 5, palette[1], 2);
+  particleRing66 = new ParticleRing(0, 0, 100, 5, palette[1], 1);
   particleRing5 = new ParticleRing(200, 0, 250, 7, palette[2], 1);
 
   // particleRing1 = new ParticleRing(0, 0, 500, 10, palette[3], 1);
   // particleRing2 = new ParticleRing(0, 0, 0, 30, palette[1], 1 / 4);
   // particleRing3 = new ParticleRing(0, 0, 160, 30, palette[3], 1 / 2);
-
-  b1 = color(palette[0]);
-  b2 = color(palette[1]);
-
   stroke(0);
 }
 
@@ -71,30 +46,35 @@ function draw() {
 
   // line(windowWidth / 2, 0, windowWidth / 2, windowHeight);
   // line(0, windowHeight / 2, windowWidth, windowHeight / 2);
-  translate(windowWidth / 2, windowHeight / 2)
+  translate(windowWidth / 2, windowHeight / 2);
 
-  time+= PI/40;
+  time+= PI*1/96;
 
   //you can call any new type of 
-  let v = createVector(200 * sin(millis() / 300), 200 * cos(millis() / 300));
+  let v = createVector(20 * sin(PI/6* millis()/1000), 20 * cos(PI/6* millis()/1000));
   //number multiplied outside trig func makes it longer
-  let vv = createVector((50 * (sin(time))), (50 * cos(time)));
+  let vv = createVector((30 * (sin(-time))), (30 * cos(-time)));
   let vv2 = createVector((100 * (sin(time*30))), (100 * cos(time*30)));
   //console.log(v);
   let v1 = createVector(50 * time, sin(50 * time));
-  let v2 = p5.Vector.fromAngle(time, 5);
+  let v2 = p5.Vector.fromAngle(sin(time/10)* time, cos(time/10) *time);
   // let v2 = p5.Vector.fromAngle(time * 8, 50);
 
-  particleRing4.show(0.85, vv);
+  //particleRing4.show(0.75, vv);
   //particleRing5.show(0.75, vv);
-  particleRing6.show(0.75, vv);
 
   textSize(32);
-  textAlign(CENTER, CENTER);
+  textAlign(CENTER);
   textFont(myFont);
-  text('starting \nsoon...', 10, 30);
-  fill(0, 102, 153);
+  text('starting \nsoon...', 0, 0);
+  fill(palette[1]);
+
+
+  
   //particleRing1.show(0.75, vv);
+
+  scale(2.5);
+  particleRing6.show(-PI/24, vv);
 
 }
 
@@ -117,7 +97,7 @@ class Particle {
     stroke(255, 255, 255, 100)
     fill(this.color[0], this.color[1], this.color[2]);
     circle(this.x + this.vector.x, this.y + this.vector.y, this.size);
-    var v = createVector(this.x + this.vector.x, this.y + this.vector.y);
+    var v = createVector((this.x + this.vector.x), (this.y + this.vector.y));
     this.history.push(v);
 
 
@@ -131,12 +111,13 @@ class Particle {
       }
       strokeCap(ROUND);
       strokeJoin(ROUND);
-      strokeWeight(map(i, 0, this.history.length, 0, this.size/2));
-      stroke(this.color[0], this.color[1], this.color[2], map(i, 0, this.history.length, 0, 255));
-      stroke(this.color[0], this.color[1], this.color[2],255);
+      strokeWeight(map(i, 0, this.history.length, 0, this.size*4/5));
+      stroke(this.color[0], this.color[1], this.color[2],120);
       noFill();
       // vertex(pos.x, pos.y);
-      point(pos.x, pos.y)  
+
+      point(pos.x, pos.y);
+
     }
     // endShape();
 
@@ -161,12 +142,13 @@ class ParticleRing {
     this.period = period;
     this.particles = []; //stores the number of particles in the Ring
     //for loop
-    for (var i = 0; i < 2 * PI; i = (i + PI / (this.period))) {
+    for (var i = 0; i < 2 * PI; i += (PI / (this.period))) {
       let prevX = (cos(i) * this.radius);
       let prevY = (sin(i) * this.radius);
       let part = new Particle(prevX, prevY, this.particleSize, this.color, createVector(0, 0));
       this.particles.push(part);
     }
+    // this.particles.push(new Particle(0,0,this.particleSize, this.color, createVector(0, 0)))
   }
 
   //this is a render method
@@ -174,9 +156,9 @@ class ParticleRing {
     push();
     noStroke();
     translate(this.y, this.x);
-    rotate(time/100)
+    rotate(time/500)
 
-    for (let i = 0; i < this.particles.length; i++) {
+    for (let i = 0; i < this.particles.length; i+=2) {
       this.particles[i].vector = v;
       let prevX = this.particles[i].x;
       let prevY = this.particles[i].y;
